@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Notas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="contenedor">
+        <div class="calendario-principal">
+            <div class="navegacion">
+                <a href="{{ url_for('ver_notas', anio=anio_ant, mes=mes_ant) }}" class="btn-nav">◄ Anterior</a>
+                <h2>Notas de {{ mes_nombre }} {{ anio }}</h2>
+                <a href="{{ url_for('ver_notas', anio=anio_sig, mes=mes_sig) }}" class="btn-nav">Siguiente ►</a>
+            </div>
+
+            {% if notas %}
+                {% for n in notas %}
+                <form method="POST" action="{{ url_for('guardar_nota') }}" class="nota-item">
+                    <input type="hidden" name="fecha" value="{{ n.fecha }}">
+                    <input type="hidden" name="destino" value="notas">
+                    <label>Día {{ n.dia }} de {{ mes_nombre }}</label>
+                    <textarea name="texto" rows="3" maxlength="1000">{{ n.texto }}</textarea>
+                    <div class="nota-botones">
+                        <button type="submit" name="borrar" value="1" class="btn-reset" formnovalidate data-confirmar="¿Borrar esta nota?">Borrar</button>
+                        <button type="submit" class="btn-guardar">Guardar cambios</button>
+                    </div>
+                </form>
+                {% endfor %}
+            {% else %}
+                <p class="sin-notas">No tienes notas este mes.</p>
+            {% endif %}
+
+            <a href="{{ url_for('index', anio=anio, mes=mes) }}" class="btn-notas">◄ Volver al calendario</a>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='notas.js') }}"></script>
+</body>
+</html>

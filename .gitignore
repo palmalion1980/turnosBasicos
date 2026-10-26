@@ -1,0 +1,20 @@
+# Entornos virtuales y cache de Python
+.venv/
+.venv-1/
+venv/
+__pycache__/
+*.pyc
+
+# Datos y secretos (nunca subir)
+turnos.json
+notas.json
+clave.json
+.secret_key
+.env
+*.tmp
+
+# Editor y sistema
+.vscode/
+.idea/
+.DS_Store
+*.log

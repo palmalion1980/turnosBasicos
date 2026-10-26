@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Calendario de Turnos</title>
+    <!-- Aquí conectamos con tu archivo de diseño visual -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="contenedor">
+        <!-- Panel Izquierdo (o superior en móviles) -->
+        <div class="panel-lateral">
+            <h2>Configuración</h2>
+            <form method="POST">
+                <label>Mi primer "Turno de Día" inicia el:</label>
+                <input type="date" name="fecha_inicio" value="{{ fecha_inicio or '' }}" required>
+                <button type="submit" class="btn-guardar">Aplicar Turnos</button>
+            </form>
+            <form method="POST">
+                <button type="submit" name="resetear" value="1" class="btn-reset">Resetear Calendario</button>
+            </form>
+
+            <a href="{{ url_for('ver_notas', anio=anio, mes=mes) }}" class="btn-notas">📝 Ver notas del mes</a>
+            <a href="{{ url_for('cambiar_clave') }}" class="btn-notas">🔑 Cambiar contraseña</a>
+            <form method="POST" action="{{ url_for('logout') }}">
+                <button type="submit" class="btn-notas">Cerrar sesión</button>
+            </form>
+
+            <div class="leyenda">
+                <div class="item-leyenda"><span class="color-dia"></span> Turno Día (08:00 - 20:00)</div>
+                <div class="item-leyenda"><span class="color-desc"></span> Descanso</div>
+                <div class="item-leyenda"><span class="color-feriado"></span> Feriado (Chile)</div>
+            </div>
+        </div>
+
+        <!-- Panel Derecho: El Calendario -->
+        <div class="calendario-principal">
+            <div class="navegacion">
+                <a href="{{ url_for('index', anio=anio_ant, mes=mes_ant) }}" class="btn-nav">◄ Anterior</a>
+                <h2>{{ mes_nombre }} {{ anio }}</h2>
+                <a href="{{ url_for('index', anio=anio_sig, mes=mes_sig) }}" class="btn-nav">Siguiente ►</a>
+            </div>
+
+            <div class="dias-semana">
+                <div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
+            </div>
+
+            <div class="grilla-calendario">
+                {% for semana in calendario %}
+                    {% for dia in semana %}
+                        <!-- Condicionales para pintar los bloques enteros -->
+                        <div class="dia-celda {% if not dia.es_mes_actual %}inactivo{% endif %}
+                                    {% if dia.turno == 'D' %}turno-dia
+                                    {% elif dia.turno == 'Desc' %}turno-descanso
+                                    {% endif %}{% if dia.feriado %} feriado{% endif %}"
+                             {% if dia.feriado %}title="{{ dia.feriado }}"{% endif %}
+                             {% if dia.es_mes_actual %}data-fecha="{{ dia.fecha }}" data-nota="{{ dia.nota }}"{% endif %}>
+
+                            <span class="numero-dia">{{ dia.dia }}</span>
+                            {% if dia.nota %}<span class="marca-nota">📝</span>{% endif %}
+                            {% if dia.feriado %}<span class="etiqueta-feriado">Feriado</span>{% endif %}
+
+                            <!-- Emojis visuales grandes para rápida identificación -->
+                            {% if dia.turno == 'D' %}<span class="icono">☀️</span>{% endif %}
+                            {% if dia.turno == 'Desc' %}<span class="icono">🏠</span>{% endif %}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <dialog id="dialogo-nota">
+        <form method="POST" action="{{ url_for('guardar_nota') }}">
+            <h3 id="nota-titulo">Nota</h3>
+            <input type="hidden" name="fecha" id="nota-fecha">
+            <textarea name="texto" id="nota-texto" rows="5" maxlength="1000" placeholder="Escribe tu nota aquí..."></textarea>
+            <div class="nota-botones">
+                <button type="button" class="btn-reset" id="nota-cancelar">Cancelar</button>
+                <button type="submit" class="btn-guardar">Guardar</button>
+            </div>
+            <small>Deja el texto vacío para borrar la nota.</small>
+        </form>
+    </dialog>
+
+    <script src="{{ url_for('static', filename='notas.js') }}"></script>
+
+    <footer class="pie-pagina">
+        <div class="pie-franja"><span></span><span></span></div>
+        <p class="pie-lugar">RyT Ambiente</p>
+        <p class="pie-autor">Desarrollado por <strong>CodeLordWillow</strong></p>
+    </footer>
+</body>
+</html>

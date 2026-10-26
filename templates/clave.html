@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cambiar contraseña</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="contenedor">
+        <div class="panel-lateral caja-centrada">
+            <h2>Cambiar contraseña</h2>
+            <form method="POST">
+                <label for="actual">Contraseña actual</label>
+                <input type="password" id="actual" name="actual" required class="campo-clave">
+                <label for="nueva">Nueva contraseña (mínimo 8 caracteres)</label>
+                <input type="password" id="nueva" name="nueva" required minlength="8" class="campo-clave">
+                <label for="repetir">Repetir nueva contraseña</label>
+                <input type="password" id="repetir" name="repetir" required minlength="8" class="campo-clave">
+                <button type="submit" class="btn-guardar">Guardar</button>
+            </form>
+            {% if error %}<p class="msg-error">{{ error }}</p>{% endif %}
+            {% if ok %}<p class="msg-ok">{{ ok }}</p>{% endif %}
+            <a href="{{ url_for('index') }}" class="btn-notas">◄ Volver al calendario</a>
+        </div>
+    </div>
+</body>
+</html>
